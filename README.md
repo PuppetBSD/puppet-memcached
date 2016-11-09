@@ -2,8 +2,11 @@
 
 Manage memcached via Puppet
 
-## Show some love
-If you find this module useful, send some bitcoins to 1Na3YFUmdxKxJLiuRXQYJU2kiNqA3KY2j9
+## About
+This is fork of https://github.com/saz/puppet-memcached with additional support for FreeBSD platform
+
+Fork reason: the lack interest of the author to support FreeBSD OS:
+https://github.com/saz/puppet-memcached/pull/79
 
 ## How to use
 

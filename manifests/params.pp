@@ -28,6 +28,19 @@ class memcached::params {
       $use_registry      = false
       $use_svcprop       = false
     }
+    'FreeBSD': {
+      $package_name      = 'memcached'
+      $package_provider  = undef
+      $service_name      = 'memcached'
+      $service_hasstatus = true
+      $dev_package_name  = undef
+      $config_file       = '/etc/rc.conf.d/memcached'
+      $config_tmpl       = "${module_name}/memcached_freebsd_rcconf.erb"
+      $user              = 'nobody'
+      $logfile           = '/var/log/memcached.log'
+      $use_registry      = false
+      $use_svcprop       = false
+     }
     /windows/: {
       $package_name      = 'memcached'
       $package_provider  = 'chocolatey'

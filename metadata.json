@@ -1,12 +1,12 @@
 {
   "name": "saz-memcached",
   "version": "2.8.1",
-  "author": "saz",
+  "author": "olevole",
   "summary": "Manage memcached via Puppet",
   "license": "Apache-2.0",
-  "source": "git://github.com/saz/puppet-memcached.git",
-  "project_page": "https://github.com/saz/puppet-memcached",
-  "issues_url": "https://github.com/saz/puppet-memcached/issues",
+  "source": "git://github.com/olevole/puppet-memcached.git",
+  "project_page": "https://github.com/olevole/puppet-memcached",
+  "issues_url": "https://github.com/olevole/puppet-memcached/issues",
   "description": "Manage memcached via Puppet",
   "requirements": [
     {"name":"puppet","version_requirement":">= 3.0.0 < 5.0.0" }
@@ -36,6 +36,9 @@
     },
     {
       "operatingsystem": "Windows"
+    },
+    {
+      "operatingsystem": "FreeBSD"
     }
   ]
 }
