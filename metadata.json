@@ -1,5 +1,5 @@
 {
-  "name": "saz-memcached",
+  "name": "olevole-memcached",
   "version": "2.8.1",
   "author": "olevole",
   "summary": "Manage memcached via Puppet",
