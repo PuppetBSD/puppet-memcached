@@ -61,7 +61,7 @@ describe 'memcached' do
       :install_dev     => false,
       :processorcount  => 1,
       :use_sasl        => false,
-      :large_mem_pages => false,
+      :large_mem_pages => false
     }
   end
 
@@ -81,6 +81,7 @@ describe 'memcached' do
       :processorcount  => 3,
       :use_sasl        => true,
       :large_mem_pages => true,
+      :extended_opts   => ['lru_crawler','lru_maintainer']
     },
     {
       :package_ensure  => 'present',
@@ -94,7 +95,8 @@ describe 'memcached' do
       :max_connections => '8193',
       :verbosity       => 'vvv',
       :install_dev     => true,
-      :processorcount  => 1
+      :processorcount  => 1,
+      :extended_opts   => ['lru_crawler','lru_maintainer']
     },
     {
       :listen_ip       => '',
@@ -153,7 +155,7 @@ describe 'memcached' do
 
           it { should contain_file("/etc/memcached.conf").with(
             'owner'   => 'root',
-            'group'   => 'root'
+            'group'   => 0
           )}
 
           it {
@@ -173,6 +175,61 @@ describe 'memcached' do
               )
             end
           }
+
+          it 'should compile the template based on the class parameters' do
+            content = param_value(
+              catalogue,
+              'file',
+              '/etc/memcached.conf',
+              'content'
+            )
+            expected_lines = [
+              "logfile #{param_hash[:logfile]}",
+              "-p #{param_hash[:tcp_port]}",
+              "-U #{param_hash[:udp_port]}",
+              "-u #{param_hash[:user]}",
+              "-c #{param_hash[:max_connections]}",
+              "-t #{param_hash[:processorcount]}"
+            ]
+            if(param_hash[:max_memory])
+              if(param_hash[:max_memory].end_with?('%'))
+                expected_lines.push("-m 200")
+              else
+                expected_lines.push("-m #{param_hash[:max_memory]}")
+              end
+            else
+              expected_lines.push("-m 950")
+            end
+            if(param_hash[:listen_ip] != '')
+              expected_lines.push("-l #{param_hash[:listen_ip]}")
+            end
+            if(param_hash[:lock_memory])
+              expected_lines.push("-k")
+            end
+            if(param_hash[:pidfile])
+              expected_lines.push("-P #{param_hash[:pidfile]}")
+            end
+            if(param_hash[:verbosity])
+              expected_lines.push("-vvv")
+            end
+            if(param_hash[:use_sasl])
+              expected_lines.push("-S")
+            end
+            if(param_hash[:large_mem_pages])
+              expected_lines.push("-L")
+            end
+            if(param_hash[:extended_opts])
+              expected_lines.push("-o lru_crawler,lru_maintainer")
+            end
+            (content.split("\n") & expected_lines).should =~ expected_lines
+          end
+        end
+      end
+      ['Redhat'].each do |osfamily|
+        describe 'on supported platform' do
+          it 'should fail' do
+
+          end
         end
       end
     end
@@ -214,6 +271,51 @@ describe 'memcached' do
 
       it {
         should contain_svcprop("memcached/options").with(
+          'fmri'     => 'memcached:default',
+          'property' => 'memcached/options',
+          'value'    => '"-m" "950" "-l" "0.0.0.0" "-p" "11211" "-U" "11211" "-u" "nobody" "-c" "8192" "-t" "1"',
+          'notify'   => 'Service[memcached]'
+        )
+      }
+    end
+  end
+
+  context 'On FreeBSD' do
+    let :facts do
+      {
+        :osfamily => 'FreeBSD',
+        :memorysize => '1000 MB',
+        :processorcount => '1',
+      }
+    end
+
+    describe 'when using default class parameters' do
+      let :param_hash do
+        default_params
+      end
+
+      let :params do
+        {}
+      end
+
+      it { should contain_class("memcached::params") }
+
+      it { should contain_package("memcached").with_ensure('present') }
+
+      it { should_not contain_firewall('100_tcp_11211_for_memcached') }
+      it { should_not contain_firewall('100_udp_11211_for_memcached') }
+
+      it {
+        should contain_service("memcached").with(
+           'ensure'     => 'running',
+           'enable'     => true,
+           'hasrestart' => true,
+           'hasstatus'  => false
+        )
+      }
+
+      it {
+        should_not contain_svcprop("memcached/options").with(
           'fmri'     => 'memcached:default',
           'property' => 'memcached/options',
           'value'    => '"-m" "950" "-l" "0.0.0.0" "-p" "11211" "-U" "11211" "-u" "nobody" "-c" "8192" "-t" "1"',

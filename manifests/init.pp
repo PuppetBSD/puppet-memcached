@@ -12,7 +12,7 @@ class memcached (
   $service_manage  = true,
   $logfile         = $::memcached::params::logfile,
   $syslog          = false,
-  $pidfile         = '/var/run/memcached.pid',
+  $pidfile         = $::memcached::params::pidfile,
   $manage_firewall = false,
   $max_memory      = false,
   $item_size       = false,
@@ -34,7 +34,8 @@ class memcached (
   $large_mem_pages = false,
   $use_svcprop     = $::memcached::params::use_svcprop,
   $svcprop_fmri    = 'memcached:default',
-  $svcprop_key     = 'memcached/options'
+  $svcprop_key     = 'memcached/options',
+  $extended_opts   = undef
 ) inherits memcached::params {
 
   # validate type and convert string to boolean if necessary
@@ -107,6 +108,7 @@ class memcached (
   if ( $memcached::params::config_file ) {
     file { $memcached::params::config_file:
       owner   => 'root',
+      group   => 0,
       mode    => '0644',
       content => template($memcached::params::config_tmpl),
       require => Package[$memcached::params::package_name],

@@ -5,6 +5,7 @@ class memcached::params {
     'Debian': {
       $package_name      = 'memcached'
       $package_provider  = undef
+      $pidfile           = '/var/run/memcached.pid'
       $service_name      = 'memcached'
       $service_hasstatus = false
       $dev_package_name  = 'libmemcached-dev'
@@ -18,6 +19,7 @@ class memcached::params {
     /RedHat|Suse/: {
       $package_name      = 'memcached'
       $package_provider  = undef
+      $pidfile           = '/var/run/memcached.pid'
       $service_name      = 'memcached'
       $service_hasstatus = true
       $dev_package_name  = 'libmemcached-devel'
@@ -31,6 +33,7 @@ class memcached::params {
     'FreeBSD': {
       $package_name      = 'memcached'
       $package_provider  = undef
+      $pidfile           = '/var/run/memcached/memcached.pid'
       $service_name      = 'memcached'
       $service_hasstatus = true
       $dev_package_name  = undef
@@ -44,6 +47,7 @@ class memcached::params {
     /windows/: {
       $package_name      = 'memcached'
       $package_provider  = 'chocolatey'
+      $pidfile           = '/var/run/memcached.pid'
       $service_name      = 'memcached'
       $service_hasstatus = true
       $dev_package_name  = 'libmemcached-devel'
@@ -57,6 +61,7 @@ class memcached::params {
     'Solaris': {
       $package_name      = 'memcached'
       $package_provider  = undef
+      $pidfile           = '/var/run/memcached.pid'
       $service_name      = 'memcached'
       $service_hasstatus = false
       $dev_package_name  = 'libmemcached'
@@ -72,6 +77,7 @@ class memcached::params {
         'Amazon': {
           $package_name      = 'memcached'
           $package_provider  = undef
+          $pidfile           = '/var/run/memcached.pid'
           $service_name      = 'memcached'
           $service_hasstatus = true
           $dev_package_name  = 'libmemcached-devel'
